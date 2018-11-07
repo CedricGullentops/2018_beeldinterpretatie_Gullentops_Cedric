@@ -1,3 +1,5 @@
+/*Cédric Gullentops*/
+
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
@@ -9,8 +11,9 @@ int main(int argc, const char** argv)
     //Parser voor events te tonen zoals errors.
     CommandLineParser parser(argc, argv,
     "{ help h usage ? |  | show this message }"
-    "{ image_grey ig  |  | (required) path to image }"
-    "{ image_colour ic|  | (required) path to colour image }"
+    "{ imageColor ic  |  | (required) path to colour image }"
+    "{ imageBimo ib  |  | (required) path to Bimodal image }"
+	"{ imageColorAdapted ica  |  | (required) path to colour image adapted }"
     );
 
     if (parser.has("help")){
@@ -26,68 +29,129 @@ int main(int argc, const char** argv)
 
     //Images inlezen en opslagen in Mat variabelen.
     string image_colour(parser.get<string>("imageColor"));
-    if (image_gray_colour.empty()){
+    string image_bimo(parser.get<string>("imageBimo"));
+	string image_colour_adapted(parser.get<string>("imageColorAdapted"));
+    if (image_colour.empty() || image_bimo.empty() || image_colour_adapted.empty()){
         cerr << "Something wrong in the given arguments" << endl;
         parser.printMessage();
         return -1;
     }
 
-    Mat g_image;
     Mat c_image;
-    g_image = imread(image_gray_location, CV_LOAD_IMAGE_GRAYSCALE);
-    c_image = imread(image_colour_location, CV_LOAD_IMAGE_COLOR );
-    if (g_image.empty() || c_image.empty()){
+    c_image = imread(image_colour, CV_LOAD_IMAGE_COLOR );
+    Mat b_image;
+    b_image = imread(image_bimo, CV_LOAD_IMAGE_COLOR );
+	Mat ca_image;
+	ca_image = imread(image_colour_adapted, CV_LOAD_IMAGE_COLOR);
+    if (c_image.empty() || b_image.empty() || ca_image.empty()){
         cerr << "image not found" << endl;
         return -1;
     }
+    resize(c_image,c_image,Size(c_image.cols/2,c_image.rows/2));
+    resize(b_image,b_image,Size(b_image.cols/2,b_image.rows/2));
 
-    //Toon de twee images.
-    namedWindow("EAvise Logo - grayscale", WINDOW_AUTOSIZE);
-    namedWindow("EAvise Logo - colour", WINDOW_AUTOSIZE);
-    imshow("EAvise Logo - grayscale", g_image);
-    imshow("EAvise Logo - colour", c_image);
+    //Toon de drie images.
+    namedWindow("colour image", WINDOW_AUTOSIZE);
+    imshow("colour image", c_image);
+    namedWindow("Bimo image", WINDOW_AUTOSIZE);
+    imshow("Bimo image", b_image);
+	namedWindow("Colour image adapted", WINDOW_AUTOSIZE);
+	imshow("Colour image adapted", ca_image);
     waitKey(0);
 
     //Splits de kleur foto op in 3 kanalen en laat elks van deze zien.
-    vector<Mat> channels;
-    split(c_image,channels);
+	vector<Mat> channels;
+	split(ca, channels);
+	imshow("Blauw", channels[0]);
+	imshow("Groen", channels[1]);
+	imshow("Rood", channels[2]);
+	waitKey(0);
 
-    namedWindow("Blue", WINDOW_AUTOSIZE);
-    imshow("Blue", channels[0]);
-    namedWindow("Green", WINDOW_AUTOSIZE);
-    imshow("Green", channels[1]);
-    namedWindow("Red", WINDOW_AUTOSIZE);
-    imshow("Red", channels[2]);
+	//Mask aanmaken
+	Mat mask = Mat::zeros(ca.rows, ca.cols, CV_8UC1);
+	Mat BLUE = channels[0]; 
+	Mat GREEN = channels[1]; 
+	Mat RED = channels[2];
+	mask = (RED > 95) & (GREEN > 40) & (BLUE > 20) & ((max(RED, max(GREEN, BLUE)) - min(RED, min(GREEN, BLUE))) > 15) &
+		(abs(RED - GREEN) > 15) & (RED > GREEN) & (RED > BLUE);
 
-    waitKey(0);
+	mask = mask * 255;
+	imshow("Mask", mask);
+	waitKey(0);
 
-    //Converteer de kleurenfoto naar een zwart-wit foto en toon deze en print elke pixelwaarde af.
-    Mat converted;
-    cvtColor(c_image, converted, COLOR_BGR2GRAY);
-    namedWindow("Converted picture", WINDOW_AUTOSIZE);
-    imshow("Converted picture", converted);
+	//Erode
+	erode(mask.clone(), mask, Mat(), Point(-1, -1), 2);
+	imshow("Eroded", mask);
+	waitKey(0);
 
-    for (int i=0; i<converted.rows; i++){
-        for (int j=0; j<converted.cols; j++){
-            cout << (int)converted.at<uchar>(i, j);
-            cout << " ";
-        }
-        cout << endl;
-    }
-    cout << endl;
+	//Dilate
+	dilate(mask.clone(), mask, Mat(), Point(-1, -1), 2);
+	imshow("Dilated", mask);
+	waitKey(0);
 
-    waitKey(0);
+	//Verbinding van stukken
+	dilate(mask.clone(), mask, Mat(), Point(-1, -1), 5);
+	erode(mask.clone(), mask, Mat(), Point(-1, -1), 5);
+	vector<vector<Point>> contour;
+	findcontour(mask.clone(), contour, RETR_EXTERNAL, CHAIN_APPROX_NONE);
+	vector<vector<Point>> hulls;
+	for (size_t i=0; i<contour.size(); i++) {
+		vector<Point> hull;
+		convexHull(contour[i], hull);
+		hulls.push_back(hull);
+	}
+	drawcontour(mask, hulls, -1, 255, -1);
+	imshow("Final mask", mask);
+	waitKey(0);
 
-    //Laatste foto met enkele willekeurige figuren.
-    Mat canvas = Mat::zeros(Size(250,250), CV_8UC3);
-    rectangle(canvas, Point(50,50), Point(150,150), Scalar(255,255,100), 2);
-    circle(canvas, Point(150,150), 75, Scalar(50,50,50), 2);
-    line(canvas, Point(0, 0), Point(150, 150), Scalar(100, 100, 100), 5);
-    namedWindow("canvas", WINDOW_AUTOSIZE);
-    imshow("canvas", canvas);
+	//Combineren masker + originele foto
+	Mat finaal(ca.rows, ca.cols, CV_8UC3);
+	Mat pixels_b = BLUE & mask;
+	Mat pixels_g = GREEN & mask;
+	Mat pixels_r = RED & mask;
+	vector<Mat> channels_mix;
+	channels_mix.push_back(pixels_b);
+	channels_mix.push_back(pixels_g);
+	channels_mix.push_back(pixels_r);
+	merge(channels_mix, finaal);
+	imshow("Masker + foto gecombineerd", finaal);
+	waitKey(0);
 
-    waitKey(0);
-    return 0;
+	//OTSU
+	Mat greyIm;
+	Mat otsuIm;
+	cvtColor(b_image, greyIm, CV_RGB2GRAY);
+	threshold(greyIm, otsuIm, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	imshow("ticket OTSU", otsuIm);
+	waitKey(0);
+
+	//Equalizing
+	Mat greyImHist;
+	equalizeHist(greyIm.clone(), greyImHist);
+	imshow("ticket histogram", greyImHist);
+	waitKey(0);
+
+	//OTSU threshold
+	Mat greyImHistOtsu;
+	threshold(greyImHist, greyImHistOtsu, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	imshow("OTSU ticket met Histogram equalization", greyImHistOtsu);
+	waitKey(0);
+
+	//CLAHE
+	Ptr<CLAHE> clahe = createCLAHE();
+	clahe->setClipLimit(4);
+	Mat greyImClahe;
+	clahe->apply(greyIm.clone(), greyImClahe);
+	imshow("CLAHE ticket", greyImClahe);
+	waitKey(0);
+
+	//OTSU threshold
+	Mat greyImClaheOtsu;
+	threshold(greyImClahe, greyImClaheOtsu, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	imshow("OTSU ticket met CLAHE", greyImClaheOtsu);
+	waitKey(0);
+
+	return 0;
 }
 
 
