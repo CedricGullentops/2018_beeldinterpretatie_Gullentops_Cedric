@@ -1,4 +1,11 @@
 /*Cédric Gullentops*/
+/*
+Build options: `pkg-config opencv --libs`
+-image_1=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_2/sign.jpg
+-image_2=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_2/sign2.jpg
+-image_3=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_2/sign3.jpg
+-image_4=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_2/sign4.jpg
+*/
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
@@ -6,153 +13,191 @@
 using namespace std;
 using namespace cv;
 
-/*To do: voeg sliders (trackbars) toe met static void on_trackbar (int, void*) {h1 = alpha_slider;} (3x keer!)*/
+const int alpha_slider_max1 = 180;
+int alpha_slider1 = 110;
+const int alpha_slider_max2 = 180;
+int alpha_slider2 = 77;
+const int alpha_slider_max3 = 255;
+int alpha_slider3 = 85;
+int h1;
+int h2;
+int s1;
 
-const int alpha_slider_max = 179;
-int alpha_slider;
-double alpha;
-
-const int beta_slider_max = 359;
-int beta_slider;
-double beta;
-
-const int gamma_slider_max = 359;
-int gamma_slider;
-double gamma;
-
-void on_trackbar1( int, void* )
+//Slider1
+static void on_trackbar1(int, void*)
 {
-    alpha = (double) alpha_slider/alpha_slider_max ;
-    addWeighted( , alpha, src2, beta, 0.0, dst);
+    h1 = alpha_slider1;
 }
 
-void on_trackbar2( int, void* )
+//Slider2
+static void on_trackbar2(int, void*)
 {
-    beta = (double) beta_slider/beta_slider_max ;
-    addWeighted( , beta, src2, beta, 0.0, dst);
+    h2 = alpha_slider2;
 }
 
-void on_trackbar3( int, void* )
+//Slider3
+static void on_trackbar3(int, void*)
 {
-    gamma = (double) gamma_slider/gamma_slider_max ;
-    addWeighted( , gamma, src2, beta, 0.0, dst);
+    s1 = alpha_slider3;
 }
 
-int main(int argc, const char** argv)
+
+int main(int argc,const char** argv)
 {
     //Parser voor events te tonen zoals errors.
-    CommandLineParser parser(argc, argv,
-    "{ help h usage ? |  | show this message }"
-    "{ sign1 sn1  |  | (required) path to first sign image }"
-    "{ sign2 sn2  |  | (required) path to second sign image }"
-    "{ sign3 sn3  |  | (required) path to third sign image }"
-    "{ sign4 sn4  |  | (required) path to fourth sign image }"
+    CommandLineParser parser(argc,argv,
+    "{help h usage ?   |  | show this message }"
+    "{image_1 i1       |  | (required) absolute path to first image }"
+    "{image_2 i2       |  | (required) absolute path to second image }"
+    "{image_3 i3       |  | (required) absolute path to third image }"
+    "{image_4 i4       |  | (required) absolute path to fourth image }"
     );
 
-    if (parser.has("help")){
+    if(parser.has("help")){
         cerr << "Please use absolute paths." << endl;
         parser.printMessage();
         return -1;
     }
 
-    if (!parser.check()){
+    if(!parser.check()){
         parser.printErrors();
         return -1;
     }
 
-    //Images inlezen en opslagen in Mat variabelen.
-    string s1(parser.get<string>("sn1"));
-    string s2(parser.get<string>("sn2"));
-    string s3(parser.get<string>("sn3"));
-    string s4(parser.get<string>("sn4"));
-    if (s1.empty() || s2.empty() || s3.empty() || s4.empty()){
+    //Haal de 4 image locaties
+    string image_1_location(parser.get<string>("image_1"));
+    string image_2_location(parser.get<string>("image_2"));
+    string image_3_location(parser.get<string>("image_3"));
+    string image_4_location(parser.get<string>("image_4"));
+    if(image_1_location.empty() || image_2_location.empty() || image_3_location.empty()  || image_4_location.empty()){
         cerr << "Something wrong in the given arguments" << endl;
         parser.printMessage();
         return -1;
     }
 
-    Mat sn1;
-    sn1 = imread(s1, CV_LOAD_IMAGE_COLOR );
-    Mat sn2;
-    sn2 = imread(s2, CV_LOAD_IMAGE_COLOR );
-    Mat sn3;
-    sn3 = imread(s3, CV_LOAD_IMAGE_COLOR );
-    Mat sn4;
-    sn4 = imread(s4, CV_LOAD_IMAGE_COLOR );
-    if (sn1.empty() || sn2.empty() || sn3.empty() || sn4.empty()){
-        cerr << "image not found" << endl;
+    //Lees de 4 foto's in
+    Mat img[4];
+    img[0] = imread(image_1_location);
+    img[1] = imread(image_2_location);
+    img[2] = imread(image_3_location);
+    img[3] = imread(image_4_location);
+
+    if(img[0].empty()){
+        cerr <<"Image1 not found";
         return -1;
     }
-    //resize(c_image,c_image,Size(c_image.cols/2,c_image.rows/2)); if nescesarry
+    if(img[1].empty()){
+        cerr <<"Image2 not found";
+        return -1;
+    }
+    if(img[2].empty()){
+        cerr <<"Image3 not found";
+        return -1;
+    }
+    if(img[3].empty()){
+        cerr <<"Image3 not found";
+        return -1;
+    }
 
-    //Toon de drie images.
-    namedWindow("sn1", WINDOW_AUTOSIZE);
-    imshow("sn1", sn1);
-    namedWindow("sn2", WINDOW_AUTOSIZE);
-    imshow("sn2", sn2);
-    namedWindow("sn3", WINDOW_AUTOSIZE);
-    imshow("sn3", sn3);
-    namedWindow("sn4", WINDOW_AUTOSIZE);
-    imshow("sn4", sn4);
+    //Tests op foto kleur threshold en range van waarden
+    Mat bgr[3],red_threshold,result;
+    for(int i=0;i<4;i++){
+        split(img[i],bgr);
+        threshold(bgr[2],red_threshold,120,255,THRESH_BINARY);
+        img[i].copyTo(result,red_threshold);
+        imshow("Red img using threshold",result);
+        waitKey(0);
+        destroyAllWindows();
+        inRange(img[i], Scalar(0, 0, 160), Scalar(50, 50, 255), result);
+        imshow("Red img using inRange",result);
+        waitKey(0);
+        destroyAllWindows();
+    }
+
+    //Tests op foto kleur met hsv
+    Mat hsv[4],mask,mask2;
+    for(int i=0;i<4;i++){
+        cvtColor(img[i],hsv[i],COLOR_BGR2HSV);
+        inRange(hsv[i], Scalar(160, 100, 100), Scalar(180, 255, 255), mask);
+        inRange(hsv[i], Scalar(0, 100, 100), Scalar(5, 255, 255), mask2);
+        mask = mask|mask2;
+        erode(mask,mask,Mat(),Point(-1,-1),1);
+        dilate(mask,mask,Mat(),Point(-1,-1),3);
+        dilate(mask, mask, Mat(), Point(-1, -1), 5);
+        erode(mask, mask, Mat(), Point(-1, -1), 5);
+        img[i].copyTo(result,mask);
+        imshow("HSV image",result);
+        waitKey(0);
+        destroyAllWindows();
+    }
+
+    //Masker
+    inRange(hsv[0], Scalar(160, 100, 100), Scalar(180, 255, 255), mask);
+    inRange(hsv[0], Scalar(0, 100, 100), Scalar(5, 255, 255), mask2);
+    mask = mask|mask2;
+    erode(mask,mask,Mat(),Point(-1,-1),1);
+    dilate(mask,mask,Mat(),Point(-1,-1),3);
+    dilate(mask, mask, Mat(), Point(-1, -1), 5);
+    erode(mask, mask, Mat(), Point(-1, -1), 5);
+    imshow("Masker",mask);
     waitKey(0);
+    destroyAllWindows();
 
-    //Splits de kleur foto op in 3 kanalen en laat elks van deze zien.
-	vector<Mat> channels;
-	split(sn1, channels);
-	imshow("Blauw", channels[0]);
-	imshow("Groen", channels[1]);
-	imshow("Rood", channels[2]);
-	waitKey(0);
+    //Blob via contours
+    vector <vector<Point>>contours;
+    findContours(mask.clone(), contours, RETR_EXTERNAL, CHAIN_APPROX_NONE);
+    vector<Point> hull;
+    convexHull(contours[0],hull);
+    vector<Point> blob = hull;
+    for (int i = 0; i < contours.size(); i++){
+        if (contourArea(contours[i]) > contourArea(blob)){
+            convexHull(contours[i], hull);
+            blob = hull;
+        }
+    }
 
-	Mat Rood_th,Groen_th,Blauw_th;
-	threshold(Rood,Rood_th,150,255,THRESH_BINARY);
-
-    imshow("R th", Rood_th);
+    //Gebruiks maskers en crop via rechthoek
+    vector<vector<Point>> temp;
+    temp.push_back((blob));
+    drawContours(mask, temp, -1, 255, -1);
+    Mat contourmask(Mat(img[0].size(), CV_8UC3));
+    imshow("Contour masker",mask);
+    img[0].copyTo(result,mask);
+    imshow("Image + contour", result);
+    Rect bound = boundingRect(mask);
+    Mat crop = result(bound);
+    imshow("Cropped", crop);
     waitKey(0);
+    destroyAllWindows();
 
-	Mat tmp1, tmp2, tmp3;
-	tmp1 = Rood & Rood_th;
-	tmp2 = Groen & Groen_th;
-	tmp3 = Rood & Rood_th;
+    //Maak sliders
+    namedWindow("Foto met slider");
+    resizeWindow("Sliders", 600, 600);
+    createTrackbar("max Hue", "Foto met slider", &alpha_slider1, alpha_slider_max1, on_trackbar1);
+    createTrackbar("min Hue", "Foto met slider", &alpha_slider2, alpha_slider_max2, on_trackbar2);
+    createTrackbar("Saturation", "Foto met slider", &alpha_slider3, alpha_slider_max3, on_trackbar3);
+    on_trackbar1(alpha_slider1,0);
+    on_trackbar2(alpha_slider2,0);
+    on_trackbar3(alpha_slider3,0);
 
-	Mat finaal(tmp1.rows, tmp1.colsm CV_8UC1);
-    Mat in[] = {tmp1, tmp2, tmp3};
-    int from_to[] = {0,0,1,1,2,2};
-    mixChannels(in,3, &finaal,1,from_to,3);
-
-    imshow("masked image", finaal);
-    waitKey(0);
-
-    alpha_slider = 0;
-    namedWindow("Linear Blend", 1);
-    createTrackbar( "trackbar1", "Linear Blend", &alpha_slider, 179, on_trackbar1 );
-    createTrackbar( "trackbar2", "Linear Blend", &alpha_slider, 255, on_trackbar2 );
-    createTrackbar( "trackbar3", "Linear Blend", &alpha_slider, 255, on_trackbar3 );
-    /*in while loop*/
-
-    while(1){
-        Mat img_hsv;
-        cvtColor(sn1, img_hsv, CV_BGR2HSV);
-        Mat channelsHSV[3];
-        split(img_hsv,channelsHSV);
-        Mat H = channelsHSV[0];
-        Mat S = channelsHSV[1];
-        Mat V = channelsHSV[2];
-
-        //imshows..
-
-        Mat h_dest1, h_dest2, h_dest3;
-        inRange(H,h1,180,h_dest1);
-        inRange(H,0,h2,h_dest2);
-        inRange(S,s1,255,s_dest);
-
-        H = (h_dest1 | h_dest2) & s_dest;
-        //imshow..
-
-        erode(H,H, Mat(), Point(-1,-1) 1);
-        dilate(H,H, Mat(), Point(-1,-1) 3);
-
-        //imshow..
-        //Mat canvas
+    //Loop voor waarden aan te passen
+    while (true)
+    {
+        inRange(hsv[0], Scalar(h1, s1, 100), Scalar(180, 255, 255), mask);
+        inRange(hsv[0], Scalar(0, s1, 100), Scalar(h2, 255, 255), mask2);
+        mask = mask|mask2;
+        erode(mask,mask,Mat(),Point(-1,-1),1);
+        dilate(mask,mask,Mat(),Point(-1,-1),3);
+        dilate(mask, mask, Mat(), Point(-1, -1), 5);
+        erode(mask, mask, Mat(), Point(-1, -1), 5);
+        result = mask;
+        img[0].copyTo(result,mask);
+        imshow("Foto met slider",result);
+        int key = waitKey(10);
+        if (key == 13)
+        {
+            break;
+        }
     }
 }
+
