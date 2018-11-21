@@ -13,21 +13,14 @@ Build options: `pkg-config opencv --libs`
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 
-/*ZIE https://docs.opencv.org/3.4/de/da9/tutorial_template_matching.html*/
-/*TO DO: maak aantal vindingen variabel*/
-
 using namespace std;
 using namespace cv;
 
-bool use_mask;
-Mat img[2]; Mat templ; Mat mask; Mat result;
+void MatchEnkelObject( Mat img, Mat templ );
+void MatchMeerderObjecten( Mat img, Mat templ );
+
 const char* image_window = "Source Image";
 const char* result_window = "Result window";
-
-int match_method;
-int max_Trackbar = 5;
-
-void MatchingMethod( int, void* );
 
 int main(int argc,const char** argv)
 {
@@ -61,6 +54,7 @@ int main(int argc,const char** argv)
     }
 
     //Lees de 3 foto's in
+    Mat img[2], templ;
     img[0] = imread(image_1_location);
     img[1] = imread(image_2_location);
     templ = imread(image_3_location);
@@ -78,55 +72,98 @@ int main(int argc,const char** argv)
         return -1;
     }
 
-    namedWindow( image_window, WINDOW_AUTOSIZE );
-    namedWindow( result_window, WINDOW_AUTOSIZE );
-    imshow("img",img[0]);
-    imshow("img2",img[1]);
-    imshow("img3",templ);
+    imshow("recht",img[0]);
+    imshow("rot",img[1]);
+    imshow("template",templ);
     waitKey(0);
     destroyAllWindows();
 
-    MatchingMethod( 0, 0 );
-    waitKey(0);
-    destroyAllWindows();
+    MatchEnkelObject(img[1], templ);
+    MatchMeerderObjecten(img[0], templ);
     return 0;
 }
 
-void MatchingMethod( int, void* )
+void MatchEnkelObject(Mat img, Mat templ)
 {
-    Mat img_display;
-    img[0].copyTo( img_display );
+    Mat result;
 
-    int result_cols =  img[0].cols - templ.cols + 1;
-    int result_rows = img[0].rows - templ.rows + 1;
+    int result_cols =  img.cols - templ.cols + 1;
+    int result_rows = img.rows - templ.rows + 1;
 
-    result.create( result_rows, result_cols, CV_32FC1 );
+    result.create(result_rows, result_cols, CV_32FC1);
 
-    matchTemplate( img[0], templ, result, TM_SQDIFF);
-    //threshold(result, result, 0.8, 1., CV_THRESH_TOZERO);
+    matchTemplate(img, templ, result, TM_SQDIFF);
+    normalize(result, result, 0, 1, NORM_MINMAX, -1, Mat());
 
-    normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
-
-    double minVal; double maxVal; Point minLoc; Point maxLoc;
-    Point matchLoc;
-    double threshold = 0.9;
-
-    while(true){
-        minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
-        matchLoc = minLoc;
-        if (maxVal>=threshold){
-            rectangle( img_display, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(0), 2, 8, 0 );
-            rectangle( result, matchLoc, Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), Scalar::all(0), 2, 8, 0 );
-
-            floodFill(result, matchLoc, Scalar(0), 0, Scalar(.1), Scalar(0.5));
-        }
-        else {break;}
-    }
-
-    imshow( image_window, img_display );
-    imshow( result_window, result );
+    imshow("Genormalizeerd", result);
     waitKey(0);
     destroyAllWindows();
-    return;
+
+    Mat result2;
+    img.copyTo(result2);
+
+    double minVal, maxVal;
+    Point minLoc, maxLoc, matchLoc;
+
+    minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+    matchLoc = minLoc;
+
+    rectangle(result2, matchLoc, Point(matchLoc.x + templ.cols , matchLoc.y + templ.rows), Scalar(255,0,0), 2, 5, 0);
+    rectangle(result, matchLoc, Point(matchLoc.x + templ.cols , matchLoc.y + templ.rows), Scalar(255,0,0), 2, 5, 0);
+
+    imshow("Genormalizeerde met rechthoek", result);
+    waitKey(0);
+    destroyAllWindows();
+
+    imshow("Een enkele match", result2);
+    waitKey(0);
+    destroyAllWindows();
 }
 
+void MatchMeerderObjecten(Mat img, Mat templ)
+{
+    Mat mask, temp, result2, result;
+    img.copyTo(result2);
+
+    int result_cols =  img.cols - templ.cols + 1;
+    int result_rows = img.rows - templ.rows + 1;
+
+    result.create(result_rows, result_cols, CV_32FC1);
+
+    matchTemplate(img, templ, result, TM_CCOEFF_NORMED);
+    normalize(result, result, 0, 1, NORM_MINMAX, -1, Mat());
+
+    threshold(result, mask, 0.8, 1, THRESH_BINARY);
+    mask.convertTo(mask, CV_8UC1);
+    mask = mask*255;
+    imshow("Mask", mask);
+    waitKey(0);
+    destroyAllWindows();
+
+    vector<vector<Point>>  contours;
+    findContours(mask, contours, RETR_EXTERNAL, CHAIN_APPROX_NONE);
+
+    double minVal, maxVal;
+    Point minLoc, maxLoc, matchLoc;
+
+    for (size_t i=0; i <contours.size(); i++)
+    {
+        Rect region = boundingRect(contours[i]);
+        Mat temp = result(region);
+        Point maxLock;
+        Point minLock;
+        minMaxLoc(temp, NULL, NULL, NULL, &maxLoc, Mat());
+        matchLoc = maxLoc;
+        rectangle(result2, Point(region.x+ matchLoc.x, region.y + matchLoc.y), Point(matchLoc.x +region.x + templ.cols, matchLoc.y +region.y + templ.rows), Scalar(255,0,0), 2, 5, 0);
+     }
+
+    imshow("Meerdere matches", result2);
+    waitKey(0);
+    destroyAllWindows();
+}
+
+/*
+TO DO:
+Voeg detectie bij gedraaide objecten toe.
+=> getRotationMatrix2D, warpAffine ?
+*/
