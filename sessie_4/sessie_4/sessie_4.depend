@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1542963883 source:/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_4/sessie_4/main.cpp
+	<iostream>
+	<opencv2/opencv.hpp>
+	"opencv2/features2d/features2d.hpp"
+
