@@ -9,11 +9,17 @@ Build options: `pkg-config opencv --libs`
 
 #include <iostream>
 #include <opencv2/opencv.hpp>\"
-
-#include "opencv2/features2d/features2d.hpp"
+#include <opencv2/features2d/features2d.hpp>
+#include "opencv2/core.hpp"
+#include "opencv2/highgui.hpp"
 
 using namespace std;
 using namespace cv;
+
+void detectKeypointsORB(Mat object, Mat image);
+void detectKeypointsBRISK(Mat object, Mat image);
+void detectKeypointsAKAZE(Mat object, Mat image);
+void KeypointMatching(string type, Mat object, Mat image, std::vector<KeyPoint> object_keypoints, std::vector<KeyPoint> image_keypoints, Mat object_descriptor, Mat image_descriptor);
 
 const char* image_window = "Source Image";
 const char* result_window = "Result window";
@@ -82,77 +88,145 @@ int main(int argc,const char** argv)
     waitKey(0);
     destroyAllWindows();
 
-    //ORB
-    Ptr<ORB> detectorORB = ORB::create();
-    Ptr<BRISK> detectorBRISK = BRISK::create();
-    Ptr<AKAZE> detectorAKAZE = AKAZE::create();
+    detectKeypointsORB(fitness[1].clone(), fitness[0].clone());
+    detectKeypointsBRISK(fitness[1].clone(), fitness[0].clone());
+    detectKeypointsAKAZE(fitness[1].clone(), fitness[0].clone());
 
-    vector<KeyPoint> keypoints_fitness_ORB, keypoints_bueno_ORB;
-    detectorORB->detect(fitness[0], keypoints_fitness_ORB);
-    detectorORB->detect(bueno[0], keypoints_bueno_ORB);
+    detectKeypointsORB(bueno[1].clone(), bueno[0].clone());
+    detectKeypointsBRISK(bueno[1].clone(), bueno[0].clone());
+    detectKeypointsAKAZE(bueno[1].clone(), bueno[0].clone());
+}
 
-    vector<KeyPoint> keypoints_fitness_BRISK, keypoints_bueno_BRISK;
-    detectorBRISK->detect(fitness[0], keypoints_fitness_BRISK);
-    detectorBRISK->detect(bueno[0], keypoints_bueno_BRISK);
-
-    vector<KeyPoint> keypoints_fitness_AKAZE, keypoints_bueno_AKAZE;
-    detectorAKAZE->detect(fitness[0], keypoints_fitness_AKAZE);
-    detectorAKAZE->detect(bueno[0], keypoints_bueno_AKAZE);
-
-    Mat fORB, fBRISK, fAKAZE;
-    Mat bORB, bBRISK, bAKAZE;
-    fORB = fitness[0].clone();
-    fBRISK = fitness[0].clone();
-    fAKAZE = fitness[0].clone();
-    bORB = bueno[0].clone();
-    bBRISK = bueno[0].clone();
-    bAKAZE = bueno[0].clone();
-
-    drawKeypoints(fORB, keypoints_fitness_ORB, fORB);
-    drawKeypoints(fBRISK, keypoints_fitness_BRISK, fBRISK);
-    drawKeypoints(fAKAZE, keypoints_fitness_AKAZE, fAKAZE);
-
-    drawKeypoints(bORB, keypoints_bueno_ORB, bORB);
-    drawKeypoints(bBRISK, keypoints_bueno_BRISK, bBRISK);
-    drawKeypoints(bAKAZE, keypoints_bueno_AKAZE, bAKAZE);
-
-    imshow("fitness ORB",fORB);
-    imshow("fitness BRISK",fBRISK);
-    imshow("fitness AKAZE",fAKAZE);
-    waitKey(0);
-    destroyAllWindows();
-
-    imshow("bueno ORB",bORB);
-    imshow("bueno BRISK",bBRISK);
-    imshow("bueno AKAZE",bAKAZE);
-    waitKey(0);
-    destroyAllWindows();
-
-
+void detectKeypointsORB(Mat object, Mat image)
+{
+    //create ORB detector
     Ptr<ORB> detector = ORB::create();
+    std::vector<KeyPoint> object_keypoints;
+    std::vector<KeyPoint> image_keypoints;
+    Mat object_descriptor;
+    Mat image_descriptor;
 
-    std::vector<KeyPoint> keypoints_1_b, keypoints_2_b,keypoints_1_f, keypoints_2_f;
-    Mat descriptors_1_b, descriptors_2_b,descriptors_1_f, descriptors_2_f;
-    detector->detectAndCompute(fitness[1], Mat(), keypoints_1_f, descriptors_1_f);
-    detector->detectAndCompute(fitness[0], Mat(), keypoints_2_f, descriptors_2_f);
-    detector->detectAndCompute(bueno[1], Mat(), keypoints_1_b, descriptors_1_b);
-    detector->detectAndCompute(bueno[0], Mat(), keypoints_2_b, descriptors_2_b);
+    //search keypoints and store them in given variables
+    detector->detectAndCompute(object, Mat(), object_keypoints, object_descriptor);
+    detector->detectAndCompute(image, Mat(), image_keypoints, image_descriptor);
 
-    BFMatcher matcher(NORM_L2);
-    std::vector<DMatch> matches;
-    matcher.match(descriptors_1_f, descriptors_2_f, matches);
-    matcher.match(descriptors_1_b, descriptors_2_b, matches);
+    //draw the keypoints
+    Mat image_result;
+    Mat object_result;
+    drawKeypoints(object.clone(), object_keypoints, object_result);
+    drawKeypoints(image.clone(), image_keypoints, image_result);
 
-    Mat img_matches_f, img_matches_b;
-    drawMatches(fitness[1], keypoints_1_f,  fitness[0], keypoints_2_f, matches, img_matches_f);
-    drawMatches(bueno[1], keypoints_1_b,  bueno[0], keypoints_2_b, matches, img_matches_b);
-
-    imshow("Matches fitness", img_matches_f);
-    imshow("Matches bueno", img_matches_b);
+    //show result
+    imshow("ORB keypoints: object", object_result);
+    imshow("ORB keypoints: image", image_result);
     waitKey(0);
     destroyAllWindows();
 
+    KeypointMatching("ORB", object, image, object_keypoints, image_keypoints, object_descriptor, image_descriptor);
+}
 
+void detectKeypointsBRISK(Mat object, Mat image)
+{
+    //BRISK
+    Ptr<BRISK> detector = BRISK::create();
+    std::vector<KeyPoint> object_keypoints;
+    std::vector<KeyPoint> image_keypoints;
+    Mat object_descriptor;
+    Mat image_descriptor;
 
-    return 0;
+    //search keypoints and store them in given variables
+    detector->detectAndCompute(object, Mat(), object_keypoints, object_descriptor);
+    detector->detectAndCompute(image, Mat(), image_keypoints, image_descriptor);
+
+    //draw the keypoints
+    Mat image_result;
+    Mat object_result;
+    drawKeypoints(object.clone(), object_keypoints, object_result);
+    drawKeypoints(image.clone(), image_keypoints, image_result);
+
+    //show result
+    imshow("BRISK keypoints: object", object_result);
+    imshow("BRISK keypoints: image", image_result);
+    waitKey(0);
+    destroyAllWindows();
+
+    KeypointMatching("BRISK", object, image, object_keypoints, image_keypoints, object_descriptor, image_descriptor);
+}
+
+void detectKeypointsAKAZE(Mat object, Mat image)
+{
+    //AKAZE
+    Ptr<AKAZE> detector = AKAZE::create();
+    std::vector<KeyPoint> object_keypoints;
+    std::vector<KeyPoint> image_keypoints;
+    Mat object_descriptor;
+    Mat image_descriptor;
+
+    //search keypoints and store them in given variables
+    detector->detectAndCompute(object, Mat(), object_keypoints, object_descriptor);
+    detector->detectAndCompute(image, Mat(), image_keypoints, image_descriptor);
+
+    //draw the keypoints
+    Mat image_result;
+    Mat object_result;
+    drawKeypoints(object.clone(), object_keypoints, object_result);
+    drawKeypoints(image.clone(), image_keypoints, image_result);
+
+    //show result
+    imshow("AKAZE keypoints: object", object_result);
+    imshow("AKAZE keypoints: image", image_result);
+    waitKey(0);
+    destroyAllWindows();
+
+    KeypointMatching("AKAZE", object, image, object_keypoints, image_keypoints, object_descriptor, image_descriptor);
+}
+
+void KeypointMatching(string type, Mat object, Mat image, std::vector<KeyPoint> object_keypoints, std::vector<KeyPoint> image_keypoints, Mat object_descriptor, Mat image_descriptor)
+{
+    //find matches in the found keypoints
+    std::vector<DMatch> keypoint_matches;
+    BFMatcher matcher(NORM_L2);
+    matcher.match(object_descriptor, image_descriptor, keypoint_matches);
+
+    //remove bad matches
+    std::sort(keypoint_matches.begin(), keypoint_matches.end());
+    const int n = 0.10f*keypoint_matches.size();
+    keypoint_matches.erase(keypoint_matches.begin()+n, keypoint_matches.end());
+
+    //draw matches
+    Mat img_matches;
+    drawMatches(object, object_keypoints, image, image_keypoints, keypoint_matches, img_matches);
+    imshow(type, img_matches);
+    waitKey(0);
+    destroyAllWindows();
+
+    //get location of matches
+    std::vector<Point2f> object_p, image_p;
+    for(size_t i=0; i<keypoint_matches.size(); i++){
+        object_p.push_back(object_keypoints[keypoint_matches[i].queryIdx].pt);
+        image_p.push_back(image_keypoints[keypoint_matches[i].trainIdx].pt);
+    }
+    Mat homography = findHomography(object_p, image_p, RANSAC);
+
+    std::vector<Point2f> obj_corners(4);
+    obj_corners[0] = cvPoint(0,0);
+    obj_corners[1] = CvPoint(object.cols);
+    obj_corners[2] = cvPoint(object.cols, object.rows);
+    obj_corners[3] = cvPoint(0, object.rows);
+
+    std::vector<Point2f> scene_corners(4);
+    perspectiveTransform(obj_corners, scene_corners, homography);
+    scene_corners[0].x += object.cols;
+    scene_corners[1].x += object.cols;
+    scene_corners[2].x += object.cols;
+    scene_corners[3].x += object.cols;
+
+    line(img_matches,scene_corners[0],scene_corners[1],Scalar(255,0,0),2);
+    line(img_matches,scene_corners[1],scene_corners[2],Scalar(255,0,0),2);
+    line(img_matches,scene_corners[2],scene_corners[3],Scalar(255,0,0),2);
+    line(img_matches,scene_corners[3],scene_corners[0],Scalar(255,0,0),2);
+
+    imshow("Gevonden object met "+type+":", img_matches);
+    waitKey(0);
+    destroyAllWindows();
 }
