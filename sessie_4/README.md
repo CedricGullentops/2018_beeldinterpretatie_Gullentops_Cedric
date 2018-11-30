@@ -1,4 +1,4 @@
-# Sessie 3 - keypoint detection and matching
+# Sessie 4 - keypoint detection and matching
 
 Met template matching gaan we op zoek naar een exact object. Wanneer er echter een grote vervorming van het gekende object kan optreden, dan lijkt template matching al snel te falen. In dit labo voeren we een analyse uit van een eyetracker opname waarbij we op zoek gaan naar een vooraf bepaald object (kinderbueono and fitness cornflakes).
 

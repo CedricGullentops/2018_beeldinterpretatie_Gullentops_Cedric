@@ -23,3 +23,25 @@ Stelselmatig zullen de sessies toegevoegd worden aan deze repository.
 | 07/12/2018 | 8U15 - 10U15 / A212 | Advanced object detection: boosted cascades, HOG+SVM |
 | 14/12/2018 | 8U15 - 10U15 / A212 | Deep learning: classification |
 | 21/12/2018 | 8U15 - 10U15 / A212 | Deep learning: localization |
+
+## Afspraken en beoordelingscriteria praktische opdracht examen Januari
+
+Er wordt van jullie verwacht om een onderwerp te kiezen via volgende [inschrijfmodule]().
+
+Algemene afspraken:
+ 
+ * Elke student kan slechts 1 onderwerp kiezen.
+ * First come, first serve. Van zodra 2 studenten eenzelfde onderwerp kiezen wordt dat onderwerp afgesloten.
+ * Binnen het gekozen onderwerp ga je op zoek naar een uitdaging, op te lossen via beeldverwerking.
+ * Je ontwikkelt op basis van OpenCV en de opgedane kennis, een oplossing voor je uitdaging.
+ * Je mag extra functionaliteit en bibliotheken gebruiken indien je dit wenst.
+ * Projecten met referenties naar bestaande code, vereisen uiteraard een originele insteek van de student, en voldoen niet indien de student de code letterlijk overneemt en werkend krijgt.
+ 
+Beoordelingscriteria:
+ * Werden de aangeleerde programmeerparadigma's correct toegepast (bvb. CommandLineParser)?
+ * Is de code duidelijk: commentaar, logische namen variabelen, propere opbouw, ...
+ * Gebruikt de student de opgedane kennis uit het labo?
+ * Kan de student creatief aan de slag met de opdracht?
+ * Werkt de oplossing voor het vooropgestelde probleem?
+ * Begrijpt de student de code (zal vooral getest worden tijdens de mondelinge verdediging)?
+ * Gebruikt de student de aangeleerde GIT concepten op een correcte manier?
