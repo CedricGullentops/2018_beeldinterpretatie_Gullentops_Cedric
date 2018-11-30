@@ -26,7 +26,7 @@ Stelselmatig zullen de sessies toegevoegd worden aan deze repository.
 
 ## Afspraken en beoordelingscriteria praktische opdracht examen Januari
 
-Er wordt van jullie verwacht om een onderwerp te kiezen via volgende [inschrijfmodule]().
+Er wordt van jullie verwacht om een onderwerp te kiezen via volgende [inschrijfmodule](https://tolapps.kuleuven.be/Tolinto/event/8559111349_gII).
 
 Algemene afspraken:
  
