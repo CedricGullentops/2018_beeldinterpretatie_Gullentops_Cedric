@@ -191,22 +191,22 @@ int main(int argc,const char** argv)
     supVecMach->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, 100, 1e-6));
     supVecMach->train(data, ROW_SAMPLE, labels);
 
-    Mat labelsKnearest, labelsBayes, labelsSvm;
-    Mat maskKnearest = Mat::zeros(strawberry[0].rows, strawberry[0].cols, CV_8UC1);
-    Mat maskBayes = Mat::zeros(strawberry[0].rows, strawberry[0].cols, CV_8UC1);
-    Mat maskSvm = Mat::zeros(strawberry[0].rows, strawberry[0].cols, CV_8UC1);
+    Mat labelsKnearest, labelsBayes, labelsSvm, maskKnearest, maskBayes, maskSvm;
+    maskKnearest = Mat::zeros(strawberry[0].rows, strawberry[0].cols, CV_8UC1);
+    maskBayes = Mat::zeros(strawberry[0].rows, strawberry[0].cols, CV_8UC1);
+    maskSvm = Mat::zeros(strawberry[0].rows, strawberry[0].cols, CV_8UC1);
 
     for(int i=0; i < strawberry[0].rows; i++){
         for(int j=0; j < strawberry[0].cols; j++){
             Vec3b cpixel = hsv.at<Vec3b>(i,j);
-            Mat data_test(1,3,CV_32FC1);
-            data_test.at<float>(0,0) = cpixel[0];
-            data_test.at<float>(0,1) = cpixel[1];
-            data_test.at<float>(0,2) = cpixel[2];
+            Mat prediction(1,3,CV_32FC1);
+            prediction.at<float>(0,0) = cpixel[0];
+            prediction.at<float>(0,1) = cpixel[1];
+            prediction.at<float>(0,2) = cpixel[2];
 
-            knearest->findNearest(data_test, knearest->getDefaultK(), labelsKnearest);
-            bayes->predict(data_test, labelsBayes);
-            supVecMach->predict(data_test,labelsSvm);
+            knearest->findNearest(prediction, knearest->getDefaultK(), labelsKnearest);
+            bayes->predict(prediction, labelsBayes);
+            supVecMach->predict(prediction,labelsSvm);
 
             maskKnearest.at<uchar>(i,j) = labelsKnearest.at<float>(0,0);
             maskBayes.at<uchar>(i,j) = labelsBayes.at<uchar>(0,0);
