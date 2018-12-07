@@ -1,7 +1,8 @@
 /*Cédric Gullentops*/
 /*
 Build options: `pkg-config opencv --libs`
--video_1=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_6/faces.mp4
+
+-video_2=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_6/people.mp4
 -cascade_1=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_6/haarcascade_frontalface_alt.xml
 -cascade_2=/home/student/Github/2018_beeldinterpretatie_Gullentops_Cedric/sessie_6/lbpcascade_frontalface_improved.xml
 */
@@ -68,6 +69,7 @@ int main(int argc,const char** argv)
     CommandLineParser parser(argc,argv,
     "{help h usage ?   |  | show this message }"
     "{video_1 v1       |  | (required) absolute path to first image }"
+    //"{video_2 v2       |  | (required) absolute path to second image }"
     "{cascade_1 c1     |  | (required) absolute path to haarcascade_frontalface }"
     "{cascade_2 c2     |  | (required) absolute path to lbpcascade }"
     );
@@ -84,6 +86,7 @@ int main(int argc,const char** argv)
 
     //Haal de twee video's op
     string faces(parser.get<string>("video_1"));
+    //string people(parser.get<string>("video_2"));
 
     String haarcascade = parser.get<String>("cascade_1");
     String lbpcascade = parser.get<String>("cascade_2");
@@ -100,6 +103,9 @@ int main(int argc,const char** argv)
     };
 
     detectFaces(faces, "faces");
+
+
+    //playVideo(people, "people");
 
     waitKey(0);
 }
