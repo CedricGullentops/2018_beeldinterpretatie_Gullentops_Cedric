@@ -7,7 +7,7 @@ Build options: `pkg-config opencv --libs`
 */
 
 #include <iostream>
-#include <opencv2/opencv.hpp>\"
+#include <opencv2/opencv.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include "opencv2/core.hpp"
 #include "opencv2/highgui.hpp"
@@ -67,7 +67,7 @@ int main(int argc,const char** argv)
     //Parser voor events te tonen zoals errors.
     CommandLineParser parser(argc,argv,
     "{help h usage ?   |  | show this message }"
-    "{video_1 v1       |  | (required) absolute path to first image }"
+    "{video_1 v1       |  | (required) absolute path to first video }"
     "{cascade_1 c1     |  | (required) absolute path to haarcascade_frontalface }"
     "{cascade_2 c2     |  | (required) absolute path to lbpcascade }"
     );
@@ -99,6 +99,7 @@ int main(int argc,const char** argv)
         return -1;
     };
 
+    cout << "Starting video, press Escape to quit\n";
     detectFaces(faces, "faces");
 
     waitKey(0);
