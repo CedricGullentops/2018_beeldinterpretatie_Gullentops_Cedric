@@ -46,26 +46,26 @@ Beoordelingscriteria:
  * Begrijpt de student de code (zal vooral getest worden tijdens de mondelinge verdediging)?
  * Gebruikt de student de aangeleerde GIT concepten op een correcte manier?
 
-| Achternaam   | Voornaam   | Opdracht                        |
-|--------------|------------|---------------------------------|
-| Aelterman    | Maxim      | MARIO - Arcade Statistics       |
-| Bastenie     | Lena       | Interactive book                |
-| Bilican      | Mesut      | Leaf classificator              |
-| Boons        | Jarrit     | Schaakbord visualiseren         |
-| Bulcke       | Christophe | Scannen van een whiteboard      |
-| Eckert       | Thomas     | Play the music                  |
-| Goovaerts    | Robbe      | Projector Fun                   |
-| Gullentops   | Cédric     | Spy messages                    |
-| Kennes       | Dries      | Pinball maken                   |
-| Leroy        | Paul       | Interactive book                |
-| Michiels     | Jonas      | Pinball maken                   |
-| Nuyts        | Wouter     | Bestukker van PCB print         |
-| Obbels       | Bram       | PACMAN - Arcade Statistics      |
-| Peeters      | Anton      | Leaf classificator              |
-| Todts        | Nick       | Bestukker van PCB print         |
-| Van Assche   | Dylan      | Play the music                  |
-| Van de Walle | Laurens    | Donkey Kong - Arcade Statistics |
-| Van Delm     | Josse      | PACMAN - Arcade Statistics      |
-| Van den Eede | Olivier    | Logo contours                   |
-| Vandevelde   | Simon      | Schaakbord visualiseren         |
-| Verschaeren  | Wout       | MARIO - Arcade Statistics       |
+| Achternaam   | Voornaam   | Opdracht                            |
+|--------------|------------|-------------------------------------|
+| Aelterman    | Maxim      | MARIO - Arcade Statistics           |
+| Bastenie     | Lena       | Interactive book                    |
+| Bilican      | Mesut      | Leaf classificator                  |
+| Boons        | Jarrit     | Schaakbord visualiseren             |
+| Bulcke       | Christophe | Scannen van een whiteboard          |
+| Eckert       | Thomas     | Play the music                      |
+| Goovaerts    | Robbe      | Projector Fun                       |
+| Gullentops   | Cédric     | Spy messages                        |
+| Kennes       | Dries      | Pinball maken                       |
+| Leroy        | Paul       | Interactive book                    |
+| Michiels     | Jonas      | Space Invaders - Arcade Statistics  |
+| Nuyts        | Wouter     | Bestukker van PCB print             |
+| Obbels       | Bram       | PACMAN - Arcade Statistics          |
+| Peeters      | Anton      | Spy messages.                       |
+| Todts        | Nick       | Bestukker van PCB print             |
+| Van Assche   | Dylan      | Play the music                      |
+| Van de Walle | Laurens    | Donkey Kong - Arcade Statistics     |
+| Van Delm     | Josse      | PACMAN - Arcade Statistics          |
+| Van den Eede | Olivier    | Logo contours                       |
+| Vandevelde   | Simon      | Schaakbord visualiseren             |
+| Verschaeren  | Wout       | MARIO - Arcade Statistics           |
