@@ -13,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HiddenMessages.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="367">
-              <caret line="126" column="28" selection-start-line="126" selection-start-column="28" selection-end-line="126" selection-end-column="28" />
+            <state relative-caret-position="435">
+              <caret line="219" column="16" selection-start-line="219" selection-start-column="16" selection-end-line="219" selection-end-column="16" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -41,11 +41,23 @@
       <find>img</find>
       <find>decodeImage</find>
       <find>maxLength</find>
+      <find>secondRow</find>
+      <find>lengthArr</find>
+      <find>modeBits</find>
+      <find>lengthBits</find>
+      <find>colorBits</find>
+      <find>convBits</find>
     </findStrings>
     <replaceStrings>
       <replace>stringtobits</replace>
       <replace>decodeimage</replace>
       <replace>maxlength</replace>
+      <replace>secondrow</replace>
+      <replace>lengtharr</replace>
+      <replace>modebits</replace>
+      <replace>lengthbits</replace>
+      <replace>colorbits</replace>
+      <replace>convbits</replace>
     </replaceStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -57,8 +69,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-379" />
-    <option name="y" value="-8" />
+    <option name="x" value="136" />
+    <option name="y" value="-19" />
     <option name="width" value="1400" />
     <option name="height" value="1000" />
   </component>
@@ -67,7 +79,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -79,6 +90,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -97,7 +109,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.string">
+  <component name="RunManager" selected="Python.decode">
     <configuration name="HiddenMessages" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="HiddenMessages" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -132,7 +144,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
-      <option name="PARAMETERS" value="decode -i &quot;C:\Users\Bullseye\PycharmProjects\HiddenMessages\encoded.jpg&quot;" />
+      <option name="PARAMETERS" value="decode -i &quot;C:\Users\Bullseye\PycharmProjects\HiddenMessages\encoded.png&quot;" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -236,8 +248,8 @@
     <entry file="file://$PROJECT_DIR$/encoded.png" />
     <entry file="file://$PROJECT_DIR$/HiddenMessages.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="126" column="28" selection-start-line="126" selection-start-column="28" selection-end-line="126" selection-end-column="28" />
+        <state relative-caret-position="435">
+          <caret line="219" column="16" selection-start-line="219" selection-start-column="16" selection-end-line="219" selection-end-column="16" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
