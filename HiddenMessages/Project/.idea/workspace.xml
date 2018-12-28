@@ -13,10 +13,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HiddenMessages.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="219" column="16" selection-start-line="219" selection-start-column="16" selection-end-line="219" selection-end-column="16" />
+            <state relative-caret-position="459">
+              <caret line="30" column="62" selection-start-line="30" selection-start-column="62" selection-end-line="30" selection-end-column="62" />
               <folding>
-                <element signature="e#0#15#0" expanded="true" />
+                <element signature="e#1212#1227#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -47,6 +47,8 @@
       <find>lengthBits</find>
       <find>colorBits</find>
       <find>convBits</find>
+      <find>Picture</find>
+      <find>print</find>
     </findStrings>
     <replaceStrings>
       <replace>stringtobits</replace>
@@ -58,6 +60,7 @@
       <replace>lengthbits</replace>
       <replace>colorbits</replace>
       <replace>convbits</replace>
+      <replace>image</replace>
     </replaceStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -109,21 +112,21 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.decode">
-    <configuration name="HiddenMessages" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.picture">
+    <configuration name="HiddenMessages" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="HiddenMessages" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\Users\Bullseye\PycharmProjects\HiddenMessages\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="PARAMETERS" value="picture -hide &quot;C:\Users\Bullseye\Documents\HiddenMessages\art.jpg&quot; -i &quot;C:\Users\Bullseye\PycharmProjects\HiddenMessages\encoded.png&quot;" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -145,6 +148,48 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
       <option name="PARAMETERS" value="decode -i &quot;C:\Users\Bullseye\PycharmProjects\HiddenMessages\encoded.png&quot;" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="picture" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="HiddenMessages" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="picture" type="PythonConfigurationType" factoryName="Python">
+      <module name="HiddenMessages" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Bullseye\PycharmProjects\HiddenMessages\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
+      <option name="PARAMETERS" value="picture -hide &quot;C:\Users\Bullseye\Documents\HiddenMessages\art.jpg&quot; -i &quot;C:\Users\Bullseye\Documents\HiddenMessages\field.jpg&quot;" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -186,7 +231,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
-      <option name="PARAMETERS" value="string -hide &quot;This is a String to be hidden!&quot;" />
+      <option name="PARAMETERS" value="string -hide &quot;This is a String to be hidden! I will keep adding stuff to this so I can see that the second row part also works. Conclussion: it's difficult to store a string that is so long that it uses the second bit of each rgb channel because it is hard to find a string that is that long.&quot;" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -196,13 +241,13 @@
     </configuration>
     <list>
       <item itemvalue="Python.string" />
+      <item itemvalue="Python.picture" />
       <item itemvalue="Python.decode" />
-      <item itemvalue="Python.HiddenMessages" />
       <item itemvalue="Python.script" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.HiddenMessages" />
+        <item itemvalue="Python.picture" />
         <item itemvalue="Python.script" />
       </list>
     </recent_temporary>
@@ -246,12 +291,15 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/script.py" />
     <entry file="file://$PROJECT_DIR$/encoded.png" />
+    <entry file="file://$PROJECT_DIR$/extracted.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/HiddenMessages.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="219" column="16" selection-start-line="219" selection-start-column="16" selection-end-line="219" selection-end-column="16" />
+        <state relative-caret-position="459">
+          <caret line="30" column="62" selection-start-line="30" selection-start-column="62" selection-end-line="30" selection-end-column="62" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#1212#1227#0" expanded="true" />
           </folding>
         </state>
       </provider>

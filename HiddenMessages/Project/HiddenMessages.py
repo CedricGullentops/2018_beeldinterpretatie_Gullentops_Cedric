@@ -3,26 +3,40 @@
 #                                                       #
 #  Description: This is program that allows data to be  #
 #  stored inside an image. Three different sorts can    #
-#  be stored: a string, an other image or a bitfile.    #
+#  be stored: a string, another image or a bitfile.     #
 #  The stored data can also be extracted. See the       #
 #  examples below.                                      #
 #########################################################
 
 # examples:
 # Hide a string -> string -hide "This is a String to be hidden!"
+#                  string -hide "This is a String to be hidden! I will keep adding stuff to this so I can see that the
+#                  second row part also works. Conclussion: it's difficult to store a string that is so long that
+#                  it uses the second bit of each rgb channel because it is hard to find a string that is that long."
+# Hide a picture -> picture -hide "C:\Users\Bullseye\Documents\HiddenMessages\art.jpg"
+#                   -i "C:\Users\Bullseye\Documents\HiddenMessages\field.jpg"
 # Decode a picture -> decode -i "C:\Users\Bullseye\PycharmProjects\HiddenMessages\encoded.png"
 
 import argparse
 import cv2
+import numpy as np
 import math
+
+
+# TODO:
+# 4) Adding support for hiding bitfiles
+
+# Improvements:
+# Change the encryption method to something more complex.
+# Look for ways to speed up the way larger files are processed.
 
 
 # ---- GENERAL ----
 
 # Functie voor de maximale grootte van het bericht (max waarde van rgb met 2 veranderen per pixel -> 3 kleuren
-# - de header size: 24 bit)
+# - de header size: 32 bit)
 def maxmessagelenght(shape):
-    return shape[0]*shape[1]*3*2-24
+    return shape[0]*shape[1]*3*2-32
 
 
 # Functie voor een string om te vormen naar een bit-array.
@@ -80,10 +94,36 @@ def createheader(mode, msglength):
     lengtharr = inttobits(msglength)
     while len(modearr) < 3:
         modearr = [0] + modearr
-    while len(lengtharr) < 21:
+    while len(lengtharr) < 29:
         lengtharr = [0] + lengtharr
-    header = modearr + lengtharr
-    return header
+    return modearr + lengtharr
+
+
+# Maak een bit-array van een foto
+def createpicturedata():
+    xarr = inttobits(hiddenimg.shape[0])
+    yarr = inttobits(hiddenimg.shape[1])
+    while len(xarr) < 12:
+        xarr = [0] + xarr
+    while len(yarr) < 12:
+        yarr = [0] + yarr
+    data = []
+    for x in range(0, hiddenimg.shape[0]):
+        for y in range(0, hiddenimg.shape[1]):
+            bvalue = hiddenimg.item(x, y, 0)
+            gvalue = hiddenimg.item(x, y, 1)
+            rvalue = hiddenimg.item(x, y, 2)
+            bbits = inttobits(bvalue)
+            gbits = inttobits(gvalue)
+            rbits = inttobits(rvalue)
+            while len(bbits) < 8:
+                bbits = [0] + bbits
+            while len(gbits) < 8:
+                gbits = [0] + gbits
+            while len(rbits) < 8:
+                rbits = [0] + rbits
+            data.extend(bbits + gbits + rbits)
+    return xarr + yarr + data
 
 
 # Verander elke rgb waarden op basis van het geencodeerde bericht.
@@ -118,15 +158,17 @@ def changevalues(bitarray):
 
 # Steek een bit gebaseerd bericht in een foto.
 def convertimage(msglength, maxlength, mode, message):
-    if msglength+24 <= maxlength and img.shape[0] > 24:
+    if msglength+32 <= maxlength and img.shape[0] > 32 and img.shape[1] > 32:
         print "The given picture is of sufficient size to store the message!"
     else:
         print "The given picture is not of sufficient size to store the message!"
         exit(2)
+    print "Creating a header..."
     header = createheader(mode, msglength)
     encoded = applykey(header+message)
+    print "Converting the image..."
     changevalues(encoded)
-    cv2.imwrite("encoded.png", img) & 0xFF
+    cv2.imwrite("encoded.png", img) & 0xFF   # PNG voor loss-less opslaan en 0xFF voor 64 bit
     print "Message succesfully stored in encoded.png!"
     cv2.imshow('encoded', img)
     cv2.waitKey(0)
@@ -142,24 +184,47 @@ def getheaderinfo(header):
     modebits = [header[0],  header[1],  header[2]]
     info.append(bitstoint(modebits))
     lengthbits = []
-    for i in range(3, 24):
+    for i in range(3, 32):
         lengthbits.append(header[i])
     info.append(bitstoint(lengthbits))
     return info
 
 
+# Haal de verborgde foto uit een bit array
+def extractpicture(data):
+    xsize = bitstoint(data[:12])
+    ysize = bitstoint(data[12:24])
+    extracted = np.zeros((xsize, ysize, 3), np.uint8)
+    counter = 24
+    for x in range(0, xsize):
+        for y in range(0, ysize):
+            extracted.itemset((x, y, 0), bitstoint(data[counter:counter+8]))
+            extracted.itemset((x, y, 1), bitstoint(data[counter+8:counter + 16]))
+            extracted.itemset((x, y, 2), bitstoint(data[counter+16:counter + 24]))
+            counter += 24
+    return extracted
+
+
 # Haal een bit-array op van de LSB van elke kleur kanaal.
 def getvalues():
     header = []
-    for i in range(0, 24):
+    for i in range(0, 32):
         value = img.item((int(math.floor(i / 3)) % img .shape[0], int(math.floor(i / (img.shape[0] * 3))), i % 3))
         arraybits = inttobits(value)
         header.append(arraybits[len(arraybits)-1])
     header = applykey(header)
     info = getheaderinfo(header)
     data = []
-    for i in range(24, 24+info[1]):
-        value = img.item((int(math.floor(i / 3)) % img.shape[0], int(math.floor(i / (img.shape[0] * 3))), i % 3))
+    secondrow = False
+    maxval = img.shape[0] * img.shape[1] * 3
+    for i in range(32, 32+info[1]):
+        if i == maxval:
+            secondrow = True
+        if not secondrow:
+            value = img.item((int(math.floor(i / 3)) % img.shape[0], int(math.floor(i / (img.shape[0] * 3))), i % 3))
+        else:
+            value = img.item((int(math.floor((i-maxval) / 3)) % img.shape[0],
+                              int(math.floor((i-maxval) / (img.shape[0] * 3))), i % 3))
         arraybits = inttobits(value)
         data.append(arraybits[len(arraybits) - 1])
     data = applykey(data)
@@ -169,12 +234,16 @@ def getvalues():
 # Decodeer een image
 def decodeimage():
     data = getvalues()
+    print "The stored data was " + str(data[0][1]) + " long."
     if data[0][0] == 0:
         print "The stored data was a String:"
         print bitstostring(data[1])
     elif data[0][0] == 1:
         print "The stored data was an image"
-        print "Saving image at: ..."
+        extracted = extractpicture(data[1])
+        print r"Saving image at: C:\Users\Bullseye\PycharmProjects\HiddenMessages\extracted.png"
+        cv2.imwrite("extracted.png", extracted) & 0xFF
+        print "Message succesfully stored in extracted.png!"
     elif data[0][0] == 2:
         print "The stored data was a bitfile."
         print "Saving file at: ..."
@@ -183,15 +252,15 @@ def decodeimage():
     return
 
 
-# Maak een commandline parser voor de gewenste mode, het item dat moet verborgen worden en een 
+# Maak een commandline parser voor de gewenste mode, het item dat moet verborgen worden en een
 # image om het bericht in te steken.
 parser = argparse.ArgumentParser(description="Hide a message or picture in another picture or video.")
 
 parser.add_argument("mode", default="string", help="selects the mode to use, "
                                                    "choose either: string, picture, bitfile or decode")
-parser.add_argument("-hide", "--hidden", default="Hide this string!", 
+parser.add_argument("-hide", "--hidden", default="Hide this string!",
                     help="the thing to be hidden, either a path to an image/bitfile or a string")
-parser.add_argument("-i", "--image", default=r"C:\Users\Bullseye\Documents\HiddenMessages\field.jpg", 
+parser.add_argument("-i", "--image", default=r"C:\Users\Bullseye\Documents\HiddenMessages\field.jpg",
                     help="the path to a usable image or the image to decode")
 
 args = parser.parse_args()
@@ -203,6 +272,8 @@ cv2.waitKey(0)
 # Voer de gekozen mode uit.
 if args.mode == "string":
     print "String mode was chosen."
+    print "We are storing the following String:"
+    print args.hidden
     bits = stringtobits(args.hidden)
     length = len(bits)
     print ("The message length is: " + str(length))
@@ -211,9 +282,22 @@ if args.mode == "string":
     convertimage(length, maxlen, 0, bits)
 elif args.mode == "picture":
     print "Picture mode was chosen."
+    hiddenimg = cv2.imread(args.hidden, 1)
+    print "We are storing the picture labeled hidden"
+    cv2.imshow('hidden', hiddenimg)
+    cv2.waitKey(0)
+    cv2.destroyWindow('hidden')
+    bits = createpicturedata()
+    length = len(bits)
+    print ("The message length is: " + str(length))
+    maxlen = maxmessagelenght(img.shape)
+    print ("The picture can store a length of: " + str(maxlen))
+    convertimage(length, maxlen, 1, bits)
 elif args.mode == "bitfile":
     print "Bitfile mode was chosen."
+    print "Sorry this mode isn't made yet."
 elif args.mode == "decode":
+    cv2.destroyWindow('image')
     print "Decode mode was chosen."
     maxlen = maxmessagelenght(img.shape)
     print ("The picture may have stored a length of: " + str(maxlen))
