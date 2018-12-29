@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ffef591b-e2bf-49ca-abda-be3b94f58b87" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/HiddenMessages.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HiddenMessages.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HiddenMessages.py" beforeDir="false" afterPath="$PROJECT_DIR$/HiddenMessages.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/encoded.png" beforeDir="false" afterPath="$PROJECT_DIR$/encoded.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/encoded.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/extracted.png" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,13 +18,23 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HiddenMessages.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="263" column="69" lean-forward="true" selection-start-line="263" selection-start-column="69" selection-end-line="263" selection-end-column="69" />
+            <state relative-caret-position="280">
+              <caret line="247" column="54" selection-start-line="247" selection-start-column="54" selection-end-line="247" selection-end-column="54" />
               <folding>
                 <element signature="e#1212#1227#0" expanded="true" />
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/extracted.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/encoded.png">
+          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
     </leaf>
@@ -57,6 +64,7 @@
       <find>convBits</find>
       <find>Picture</find>
       <find>print</find>
+      <find>extracting data</find>
     </findStrings>
     <replaceStrings>
       <replace>stringtobits</replace>
@@ -83,10 +91,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="135" />
-    <option name="y" value="-20" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
+    <option name="width" value="1938" />
+    <option name="height" value="1048" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -180,7 +188,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
-      <option name="PARAMETERS" value="picture -hide &quot;C:\Users\cedri\Documents\GitHub\2018_beeldinterpretatie_Gullentops_Cedric\HiddenMessages\Pictures\art.jpg&quot; -i &quot;C:\Users\cedri\Documents\GitHub\2018_beeldinterpretatie_Gullentops_Cedric\HiddenMessages\Project\encoded.png&quot;" />
+      <option name="PARAMETERS" value="picture -hide &quot;C:\Users\cedri\Documents\GitHub\2018_beeldinterpretatie_Gullentops_Cedric\HiddenMessages\Pictures\gap.jpg&quot; -i &quot;C:\Users\cedri\Documents\GitHub\2018_beeldinterpretatie_Gullentops_Cedric\HiddenMessages\Pictures\field.jpg&quot;" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -201,7 +209,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HiddenMessages.py" />
-      <option name="PARAMETERS" value="string -hide &quot;This is a String to be hidden! I will keep adding stuff to this so I can see that the second row part also works. Conclussion: it's difficult to store a string that is so long that it uses the second bit of each rgb channel because it is hard to find a string that is that long.&quot;" />
+      <option name="PARAMETERS" value="string -hide &quot;Sonja&quot;" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -241,12 +249,12 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1440846" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1440846" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2733711" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2733711" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.35211268" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -262,16 +270,16 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/script.py" />
-    <entry file="file://$PROJECT_DIR$/extracted.png">
+    <entry file="file://$PROJECT_DIR$/encoded.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/encoded.png">
+    <entry file="file://$PROJECT_DIR$/extracted.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$PROJECT_DIR$/HiddenMessages.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="263" column="69" lean-forward="true" selection-start-line="263" selection-start-column="69" selection-end-line="263" selection-end-column="69" />
+        <state relative-caret-position="280">
+          <caret line="247" column="54" selection-start-line="247" selection-start-column="54" selection-end-line="247" selection-end-column="54" />
           <folding>
             <element signature="e#1212#1227#0" expanded="true" />
           </folding>

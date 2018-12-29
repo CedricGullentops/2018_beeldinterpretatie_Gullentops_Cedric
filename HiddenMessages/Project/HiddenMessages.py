@@ -32,6 +32,7 @@ import math
 # Improvements:
 # Change the encryption method to something more complex.
 # Look for ways to speed up the manner in which larger files are processed.
+# Process video to store data per frame
 
 
 # ---- GENERAL ----
@@ -140,6 +141,8 @@ def changevalues(bitarray):
         value = img.item((int(math.floor(counter/3)) % img.shape[0], int(math.floor(counter/(img.shape[0]*3))),
                           counter % 3))
         colorbits = inttobits(value)
+        while len(colorbits) < 8:
+            colorbits = [0] + colorbits
         if not secondrow:
             if colorbits[len(colorbits)-1] == b:
                 counter += 1
@@ -161,7 +164,7 @@ def changevalues(bitarray):
 
 # Steek een bit gebaseerd bericht in een foto.
 def convertimage(msglength, maxlength, mode, message):
-    if msglength+32 <= maxlength and img.shape[0] > 32 and img.shape[1] > 32:
+    if msglength <= maxlength and img.shape[0] > 32 and img.shape[1] > 32:
         print("The given picture is of sufficient size to store the message!")
     else:
         print("The given picture is not of sufficient size to store the message!")
@@ -195,6 +198,7 @@ def getheaderinfo(header):
 
 # Haal de verborgde foto uit een bit array
 def extractpicture(data):
+    print("Creating new picture...")
     xsize = bitstoint(data[:12])
     ysize = bitstoint(data[12:24])
     extracted = np.zeros((xsize, ysize, 3), np.uint8)
@@ -210,6 +214,7 @@ def extractpicture(data):
 
 # Haal een bit-array op van de LSB van elke kleur kanaal.
 def getvalues():
+    print("Extracting header...")
     header = []
     for i in range(0, 32):
         value = img.item((int(math.floor(i / 3)) % img .shape[0], int(math.floor(i / (img.shape[0] * 3))), i % 3))
@@ -218,21 +223,31 @@ def getvalues():
     header = applykey(header)
     info = getheaderinfo(header)
     data = []
-    secondrow = False
     maxval = img.shape[0] * img.shape[1] * 3
-    for i in range(32, 32+info[1]):
-        if i == maxval:
-            secondrow = True
-        if not secondrow:
+    print("Extracting data...")
+    if info[1]+32 <= maxval:
+        for i in range(32, info[1]+32):
             value = img.item((int(math.floor(i / 3)) % img.shape[0], int(math.floor(i / (img.shape[0] * 3))), i % 3))
-        else:
-            value = img.item((int(math.floor((i-maxval) / 3)) % img.shape[0],
-                              int(math.floor((i-maxval) / (img.shape[0] * 3))), i % 3))
-        arraybits = inttobits(value)
-        data.append(arraybits[len(arraybits) - 1])
+            arraybits = inttobits(value)
+            while len(arraybits) < 8:
+                arraybits = [0] + arraybits
+            data.append(arraybits[len(arraybits) - 1])
+    else:
+        for i in range(32, maxval):
+            value = img.item((int(math.floor(i / 3)) % img.shape[0], int(math.floor(i / (img.shape[0] * 3))), i % 3))
+            arraybits = inttobits(value)
+            while len(arraybits) < 8:
+                arraybits = [0] + arraybits
+            data.append(arraybits[len(arraybits) - 1])
+        for i in range(0, info[1]-maxval+32):
+            value = img.item((int(math.floor(i / 3)) % img.shape[0],
+                              int(math.floor(i / (img.shape[0] * 3))), i % 3))
+            arraybits = inttobits(value)
+            while len(arraybits) < 8:
+                arraybits = [0] + arraybits
+            data.append(arraybits[len(arraybits) - 2])
     data = applykey(data)
     return [info, data]
-
 
 # Decodeer een image
 def decodeimage():
@@ -304,7 +319,6 @@ elif args.mode == "decode":
     print("Decode mode was chosen.")
     maxlen = maxmessagelenght(img.shape)
     print("The picture may have stored a length of: " + str(maxlen))
-    print("Extracting data...")
     decodeimage()
 else:
     print("No valid mode was given! Next time choose either string, picture, bitfile or decode!")
