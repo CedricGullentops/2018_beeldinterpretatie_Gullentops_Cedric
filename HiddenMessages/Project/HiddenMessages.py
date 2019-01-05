@@ -32,6 +32,8 @@ import math
 # Improvements:
 # Change the encryption method to something more complex.
 # Look for ways to speed up the manner in which larger files are processed.
+#       - numpy for matrix calculations
+#       - usage of GPU instead of CPU
 # Process video to store data per frame
 
 
